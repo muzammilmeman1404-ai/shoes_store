@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header styles */
+        h1 {
+            color: #4e2804;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Cart items container styles */
+        #cart-items {
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Individual cart item styles */
+        .cart-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Empty cart message */
+        #cart-items p {
+            text-align: center;
+            color: #999;
+            font-size: 18px;
+        }
+
+        /* Item name and price styles */
+        .item-info b {
+            color: #4e2804;
+            font-size: 18px;
+        }
+
+        /* Delete button styles */
+        .delete-btn {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            #cart-items {
+                width: 100%;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-info b {
+                font-size: 16px;
+            }
+
+            .delete-btn {
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <div id="cart-items"></div>
+    <br>
+    <a href="product.html">Go back to shop</a>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cartItemsElement = document.getElementById('cart-items');
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const renderCartItems = () => {
+                cartItemsElement.innerHTML = '';
+
+                if (cartItems.length === 0) {
+                    cartItemsElement.innerHTML = "<p>Your cart is empty</p>";
+                } else {
+                    cartItems.forEach((item, index) => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('cart-item');
+                        itemElement.innerHTML = `
+                            <div class="item-info">
+                                <b>Name:</b> ${item.name} | <b>Price:</b> ${item.price}
+                            </div>
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        `;
+                        cartItemsElement.appendChild(itemElement);
+                    });
+
+                    // Add event listeners to delete buttons
+                    const deleteButtons = document.querySelectorAll('.delete-btn');
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const index = e.target.getAttribute('data-index');
+                            deleteItem(index);
+                        });
+                    });
+                }
+            };
+
+            const deleteItem = (index) => {
+                cartItems.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+                renderCartItems();
+            };
+
+            renderCartItems();
+        });
+    </script>
+</body>
+</html>
+
